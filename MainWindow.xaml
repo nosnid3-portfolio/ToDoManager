@@ -9,7 +9,7 @@
     
     <Window.Resources>
         <DataTemplate x:Key="ItemTemplate">
-            <Border BorderThickness="1" BorderBrush="Gray" Background="White"  Margin="5" Padding="5">
+            <Border BorderThickness="1" BorderBrush="Gray" Background="Red" Margin="5" Padding="5">
                 <StackPanel>
                     <TextBlock Text="{Binding Description}" />
                     <TextBlock Text="{Binding Points, StringFormat='Points: {0}'}" />
@@ -68,21 +68,21 @@
 
 
         <!-- Adds a listbox to every column -->
-        <ListBox x:Name="Tasks" Grid.Row="2" Grid.Column="0" AllowDrop="True">
+        <ListBox x:Name="Tasks" Grid.Row="2" Grid.Column="0" AllowDrop="True" ItemTemplate="{StaticResource ItemTemplate}" >
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-        <ListBox x:Name="Progress" Grid.Row="2" Grid.Column="1" AllowDrop="True">
+        <ListBox x:Name="Progress" Grid.Row="2" Grid.Column="1" AllowDrop="True" ItemTemplate="{StaticResource ItemTemplate}" >
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-        <ListBox x:Name="Done" Grid.Row="2" Grid.Column="2" AllowDrop="True">
+        <ListBox x:Name="Done" Grid.Row="2" Grid.Column="2" AllowDrop="True" ItemTemplate="{StaticResource ItemTemplate}" >
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />

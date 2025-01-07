@@ -40,6 +40,7 @@ namespace ToDoManager
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = this;
             LoadData();
 
             Tasks.PreviewMouseLeftButtonDown += OnItemMouseLeftButtonDown;
@@ -65,20 +66,24 @@ namespace ToDoManager
             int taskPriority = (int)PrioritySlider.Value; 
             int taskDifficulty = (int)DifficultySlider.Value;
 
-            // If the user input text in the description textbox, add the task to the board
+            // If the user typed some text into the description on the popup
+            // then add the task to the board
             if (!string.IsNullOrEmpty(taskDescription))
                 AddTaskToList(Tasks, new Task 
-                    { 
-                        Id = Guid.NewGuid().ToString(), 
-                        Description = taskDescription,
-                        Priority = taskPriority,
-                        Difficulty = taskDifficulty,
-                        Points = taskPriority * taskPriority + taskDifficulty * taskDifficulty
-                    }
+                                            { 
+                                                Id = Guid.NewGuid().ToString(), 
+                                                Description = taskDescription,
+                                                Priority = taskPriority,
+                                                Difficulty = taskDifficulty,
+                                                Points = taskPriority * taskPriority + taskDifficulty * taskDifficulty
+                                            }
                 );
         }
 
-        private void ClosePopupButton_Click(object sender, RoutedEventArgs e) { IsNewTaskPopupOpen = false; }
+        private void ClosePopupButton_Click(object sender, RoutedEventArgs e) 
+        { 
+            IsNewTaskPopupOpen = false; 
+        }
 
         private void AddTaskToList(ListBox listBox, Task task) 
         { 
