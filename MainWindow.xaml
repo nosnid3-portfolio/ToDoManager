@@ -5,20 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToDoManager"
         mc:Ignorable="d"
-        Title="Edinson's To Do Manager" Height="450" Width="800">
+        Title="Edinson's To Do Manager" Height="720" Width="1280" Background="Moccasin"
+        Icon="/ToDoManager;component/Graphics/Icon.png">
     
-    <Window.Resources>
-        <DataTemplate x:Key="ItemTemplate">
-            <Border BorderThickness="1" BorderBrush="Gray" Background="Red" Margin="5" Padding="5">
-                <StackPanel>
-                    <TextBlock Text="{Binding Description}" />
-                    <TextBlock Text="{Binding Points, StringFormat='Points: {0}'}" />
-                </StackPanel>
-            </Border>
-        </DataTemplate>
+    <!-- To meet the attribution licence I need the following displayed somewhere:
+    <a href="https://www.flaticon.com/free-icons/to-do" title="to do icons">To do icons created by Freepik - Flaticon</a>
+    -->
 
-        <!-- Style for ListBoxItem to change background color based on point value -->
-        <Style TargetType="ListBoxItem">
+    <Window.Resources>
+
+        <!-- Fonts -->
+        <FontFamily x:Key="HeadingFont">/ToDoManager;component/Fonts/#Unica One Regular(OpenType)</FontFamily>
+        <FontFamily x:Key="BodyFont">/ToDoManager;component/Fonts/#Quicksand Regular(OpenType)</FontFamily>
+        
+        <!-- ListBoxItem triggered style; background color changes based on point value -->
+        <Style x:Key="PointsBasedItemStyle" TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Points}" Value="2">
                     <Setter Property="Background" Value="LightGray" />
@@ -27,24 +29,37 @@
                     <Setter Property="Background" Value="LightGreen" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Points}" Value="8">
-                    <Setter Property="Background" Value="Blue" />
+                    <Setter Property="Background" Value="SkyBlue" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Points}" Value="10">
-                    <Setter Property="Background" Value="BlueViolet" />
+                    <Setter Property="Background" Value="MediumPurple" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Points}" Value="13">
                     <Setter Property="Background" Value="Orange" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Points}" Value="18">
-                    <Setter Property="Background" Value="Red" />
+                    <Setter Property="Background" Value="IndianRed" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        
+        <!-- ListBoxItem template -->
+        <DataTemplate x:Key="ItemTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="{Binding Description}" FontFamily="{StaticResource BodyFont}" FontSize="16" Grid.Column="0" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Points, StringFormat='+{0}'}" FontFamily="{StaticResource BodyFont}" FontSize="16" Grid.Column="1" VerticalAlignment="Center" />
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
 
-
+    <!-- Main grid -->
     <Grid>
-        <!-- Define the rows and columns -->
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -55,44 +70,24 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
 
-        <!-- Adds titles to the columns -->
-        <TextBlock Text="Tasks" Grid.Row="0" Grid.Column="0"
-                                FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />
-        <TextBlock Text="Progress" Grid.Row="0" Grid.Column="1" 
-                                FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />
-        <TextBlock Text="Done" Grid.Row="0" Grid.Column="2"
-                                FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />
+        <!-- Titles -->
+        <TextBlock Text="Tasks" Grid.Row="0" Grid.Column="1" FontFamily="{StaticResource HeadingFont}" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" />
+        <TextBlock Text="Progress" Grid.Row="0" Grid.Column="2" FontFamily="{StaticResource HeadingFont}" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" />
+        <TextBlock Text="Done" Grid.Row="0" Grid.Column="3" FontFamily="{StaticResource HeadingFont}" FontWeight="Bold" FontSize="24" HorizontalAlignment="Center" />
 
 
-        <!-- Adds a listbox to every column -->
-        <ListBox x:Name="Tasks" Grid.Row="2" Grid.Column="0" AllowDrop="True" ItemTemplate="{StaticResource ItemTemplate}" >
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
-        <ListBox x:Name="Progress" Grid.Row="2" Grid.Column="1" AllowDrop="True" ItemTemplate="{StaticResource ItemTemplate}" >
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
-        <ListBox x:Name="Done" Grid.Row="2" Grid.Column="2" AllowDrop="True" ItemTemplate="{StaticResource ItemTemplate}" >
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>
+        <!-- Listboxes -->
+        <ListBox x:Name="Tasks" Grid.Row="2" Grid.Column="1" AllowDrop="True" Background="Moccasin" ItemsSource="{Binding Tasks}" ItemTemplate="{StaticResource ItemTemplate}" ItemContainerStyle="{StaticResource PointsBasedItemStyle}" ></ListBox>
+        <ListBox x:Name="Progress" Grid.Row="2" Grid.Column="2" AllowDrop="True" Background="Moccasin" ItemsSource="{Binding Progress}" ItemTemplate="{StaticResource ItemTemplate}" ItemContainerStyle="{StaticResource PointsBasedItemStyle}" ></ListBox>
+        <ListBox x:Name="Done" Grid.Row="2" Grid.Column="3" AllowDrop="True" Background="Moccasin" ItemsSource="{Binding Done}" ItemTemplate="{StaticResource ItemTemplate}" ItemContainerStyle="{StaticResource PointsBasedItemStyle}" ></ListBox>
 
 
-        <!-- Add a new task button -->
-        <Button x:Name="OpenNewTaskPopupButton" Content="Add A New Task" Grid.Row="1" Grid.Column="0" Margin="10" Click="OpenNewTaskPopupButton_Click" />
+        <!-- Buttons -->
+        <Button x:Name="OpenNewTaskPopupButton" Content="Add A New Task" FontFamily="{StaticResource BodyFont}" FontSize="14" Grid.Row="1" Grid.Column="1" Margin="10" Click="OpenNewTaskPopupButton_Click" />
 
 
         <!-- Popup for New Task -->
@@ -106,22 +101,25 @@
                     </StackPanel>
                     
                     <!-- The description for the task -->
-                    <TextBlock Text="Task Description:" Margin="5" />
+                    <TextBlock Text="Task Description:" Margin="5" FontFamily="{StaticResource BodyFont}" FontSize="14" />
                     <TextBox x:Name="TaskDescriptionTextBox" Margin="5" />
 
                     <!-- Priority Slider -->
-                    <TextBlock Text="Priority:" Margin="5" />
+                    <TextBlock Text="Priority:" Margin="5" FontFamily="{StaticResource BodyFont}" FontSize="14" />
                     <Slider x:Name="PrioritySlider" Minimum="1" Maximum="3" TickFrequency="1" IsSnapToTickEnabled="True" Margin="5" TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight" />
 
                     <!-- Difficulty Slider -->
-                    <TextBlock Text="Difficulty:" Margin="5" />
+                    <TextBlock Text="Difficulty:" Margin="5" FontFamily="{StaticResource BodyFont}" FontSize="14" />
                     <Slider x:Name="DifficultySlider" Minimum="1" Maximum="3" TickFrequency="1" IsSnapToTickEnabled="True" Margin="5" TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="Add Task" Margin="5" Click="AddTaskButton_Click" />
                     </StackPanel>
+                    
                 </StackPanel>
             </Border>
         </Popup>
+        
     </Grid>
+    
 </Window>

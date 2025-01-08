@@ -155,7 +155,7 @@ namespace ToDoManager
             return listBox.Items.Count;
         }
 
-        private ListBox FindSourceListBox(Task task)
+        private ListBox? FindSourceListBox(Task task)
         {
             if (((List<Task>)Tasks.ItemsSource).Any(t => t.Id == task.Id))
                 return Tasks;
