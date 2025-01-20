@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Syncfusion.Windows.Controls.PivotGrid;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using System.Windows;
@@ -10,17 +11,21 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace ToDoManager
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// 
+    /// Keep the code related to the window and its basic initialization here.
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private Point _dragStartPoint;
-        private bool _isNewTaskPopupOpen; 
-        public bool IsNewTaskPopupOpen 
+        
+        private bool _isNewTaskPopupOpen;
+        
+        public bool IsNewTaskPopupOpen
         { 
             get { return _isNewTaskPopupOpen; } 
             set 
@@ -40,20 +45,46 @@ namespace ToDoManager
         public MainWindow()
         {
             InitializeComponent();
+
+            // Set data context for data binding
             DataContext = this;
+
+            // Load the initial data
             LoadData();
+        }
 
-            Tasks.PreviewMouseLeftButtonDown += OnItemMouseLeftButtonDown;
-            Progress.PreviewMouseLeftButtonDown += OnItemMouseLeftButtonDown;
-            Done.PreviewMouseLeftButtonDown += OnItemMouseLeftButtonDown;
+        // Methods below are connecting the MainWindow to the DragDropManager class
+        private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragDropManager.OnMouseLeftButtonDown(sender, e);
+        }
 
-            Tasks.MouseMove += OnItemMouseMove;
-            Progress.MouseMove += OnItemMouseMove;
-            Done.MouseMove += OnItemMouseMove;
+        private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            DragDropManager.OnMouseLeftButtonUp(sender, e);
+        }
 
-            Tasks.Drop += OnItemDrop;
-            Progress.Drop += OnItemDrop;
-            Done.Drop += OnItemDrop;
+        private void OnItemMouseMove( object sender, MouseEventArgs e )
+        {
+            DragDropManager.OnItemMouseMove(sender, e);
+        }
+
+        private void OnItemDrop(object sender, DragEventArgs e)
+        {
+            DragDropManager.OnItemDrop(sender, e, Tasks, Progress, Done);
+        }
+        //
+
+
+        // When a listboxitem is selected
+        public void MyListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Check if an item is selected
+            if (Tasks != null && Tasks.SelectedItem != null)
+            {
+                // Do something with the selected item
+                Task selectedItem = (Task)Tasks.SelectedItem;
+            }
         }
 
         // When the user presses the "Add A New Task" button -> show the popup menu
@@ -69,26 +100,20 @@ namespace ToDoManager
             // If the user typed some text into the description on the popup
             // then add the task to the board
             if (!string.IsNullOrEmpty(taskDescription))
-                AddTaskToList(Tasks, new Task 
-                                            { 
-                                                Id = Guid.NewGuid().ToString(), 
-                                                Description = taskDescription,
-                                                Priority = taskPriority,
-                                                Difficulty = taskDifficulty,
-                                                Points = taskPriority * taskPriority + taskDifficulty * taskDifficulty
-                                            }
-                );
+                TaskManager.AddTaskToList(Tasks, new Task 
+                    { 
+                        Id = Guid.NewGuid().ToString(), 
+                        Description = taskDescription,
+                        Priority = taskPriority,
+                        Difficulty = taskDifficulty,
+                        Points = taskPriority * taskPriority + taskDifficulty * taskDifficulty
+                    });
         }
 
+        // 'X' button in the popup
         private void ClosePopupButton_Click(object sender, RoutedEventArgs e) 
         { 
             IsNewTaskPopupOpen = false; 
-        }
-
-        private void AddTaskToList(ListBox listBox, Task task) 
-        { 
-            var tasks = new List<Task>((List<Task>)listBox.ItemsSource) { task }; 
-            listBox.ItemsSource = tasks; 
         }
 
         private void LoadData()
@@ -101,88 +126,6 @@ namespace ToDoManager
 
             Done.ItemsSource = new List<Task> { };
             Done.ItemTemplate = (DataTemplate)Resources["ItemTemplate"];
-        }
-
-        private void OnItemMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            _dragStartPoint = e.GetPosition(null);
-        }
-
-        private void OnItemMouseMove(object sender, MouseEventArgs e)
-        {
-            Point mousePosition = e.GetPosition(null);
-            Vector diff = _dragStartPoint - mousePosition;
-            
-            if (e.LeftButton == MouseButtonState.Pressed && 
-                (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || 
-                Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
-            {
-                if (sender is ListBox listBox && listBox.SelectedItem is Task task)
-                    DragDrop.DoDragDrop(listBox, task, DragDropEffects.Move);
-            }
-                
-        }
-
-        private void OnItemDrop(object sender, DragEventArgs e)
-        {
-            if (sender is ListBox listBox && e.Data.GetData(typeof(Task)) is Task task)
-            {
-                var sourceListBox = FindSourceListBox(task);
-                Point dropPosition = e.GetPosition(listBox);
-                int dropIndex = GetDropIndex(listBox, dropPosition);
-
-                if (sourceListBox != listBox || sourceListBox != null)
-                    RemoveTaskFromSourceList(sourceListBox, task);
-
-                InsertTaskToList(listBox, task, dropIndex);
-            }
-        }
-
-        private int GetDropIndex(ListBox listBox, Point dropPosition)
-        {
-            for (int i = 0; i < listBox.Items.Count; i++) 
-            { 
-                ListBoxItem item = (ListBoxItem)listBox.ItemContainerGenerator.ContainerFromIndex(i); 
-
-                if (item != null) 
-                { 
-                    Point itemPosition = item.TransformToAncestor(listBox).Transform(new Point(0, 0)); 
-                    
-                    if (dropPosition.Y < itemPosition.Y + item.ActualHeight / 2)
-                        return i;
-                } 
-            }
-            return listBox.Items.Count;
-        }
-
-        private ListBox? FindSourceListBox(Task task)
-        {
-            if (((List<Task>)Tasks.ItemsSource).Any(t => t.Id == task.Id))
-                return Tasks;
-            if (((List<Task>)Progress.ItemsSource).Any(t => t.Id == task.Id))
-                return Progress;
-            if (((List<Task>)Done.ItemsSource).Any(t => t.Id == task.Id))
-                return Done;
-            return null;
-        }
-
-        private void RemoveTaskFromSourceList(ListBox listBox,  Task task)
-        {
-            var tasks = new List<Task>((List<Task>)listBox.ItemsSource); 
-            tasks.RemoveAll(t => t.Id == task.Id); 
-            listBox.ItemsSource = tasks;
-        }
-
-        private void InsertTaskToList(ListBox listBox, Task task, int index)
-        {
-            var tasks = new List<Task>((List<Task>)listBox.ItemsSource);
-
-            if (index >= 0 && index <= tasks.Count)
-                tasks.Insert(index, task);
-            else
-                tasks.Add(task);
-                
-            listBox.ItemsSource = tasks;
         }
     }
 }
