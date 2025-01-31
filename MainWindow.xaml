@@ -12,11 +12,10 @@
     <a href="https://www.flaticon.com/free-icons/to-do" title="to do icons">To do icons created by Freepik - Flaticon</a>
     <a href="https://www.flaticon.com/free-icons/move" title="move icons">Move icons created by Andrean Prabowo - Flaticon</a>
     <a href="https://www.flaticon.com/free-icons/replay-arrow" title="replay arrow icons">Replay arrow icons created by bouzix - Flaticon</a>
+    
+    
+    Instead use the ASCII symbols and see if I can use them as icons.
     -->
-
-    <Window.DataContext>
-        <local:DragDropManager/>
-    </Window.DataContext>
 
     <Window.Resources>
 
@@ -92,10 +91,11 @@
                  AllowDrop="True" 
                  Background="Moccasin"
                  PreviewMouseLeftButtonDown="OnMouseLeftButtonDown" 
+                 PreviewMouseLeftButtonUp="OnMouseLeftButtonUp"
                  MouseMove="OnItemMouseMove" 
                  Drop="OnItemDrop" 
-                 PreviewMouseLeftButtonUp="OnMouseLeftButtonUp"
-                 SelectionChanged="MyListBox_SelectionChanged"  
+                 
+                 
                  ItemsSource="{Binding Tasks}" 
                  ItemTemplate="{StaticResource ItemTemplate}" 
                  ItemContainerStyle="{StaticResource PointsBasedItemStyle}" >
@@ -104,14 +104,14 @@
         <ListBox x:Name="Progress" 
                  Grid.Row="2" Grid.Column="2" AllowDrop="True" Background="Moccasin" 
                  PreviewMouseLeftButtonDown="OnMouseLeftButtonDown" MouseMove="OnItemMouseMove" Drop="OnItemDrop" PreviewMouseLeftButtonUp="OnMouseLeftButtonUp"
-                 SelectionChanged="MyListBox_SelectionChanged"  
+                 
                  ItemsSource="{Binding Progress}" ItemTemplate="{StaticResource ItemTemplate}" ItemContainerStyle="{StaticResource PointsBasedItemStyle}" >
         </ListBox>
 
         <ListBox x:Name="Done" 
                  Grid.Row="2" Grid.Column="3" AllowDrop="True" Background="Moccasin" 
                  PreviewMouseLeftButtonDown="OnMouseLeftButtonDown" MouseMove="OnItemMouseMove" Drop="OnItemDrop" PreviewMouseLeftButtonUp="OnMouseLeftButtonUp"
-                 SelectionChanged="MyListBox_SelectionChanged"  
+                 
                  ItemsSource="{Binding Done}" ItemTemplate="{StaticResource ItemTemplate}" ItemContainerStyle="{StaticResource PointsBasedItemStyle}" >
         </ListBox>
 
@@ -132,7 +132,7 @@
                     
                     <!-- The description for the task -->
                     <TextBlock Text="Task Description:" Margin="5" FontFamily="{StaticResource BodyFont}" FontSize="14" />
-                    <TextBox x:Name="TaskDescriptionTextBox" Margin="5" />
+                    <TextBox x:Name="TaskDescriptionTextBox" Value ="" Margin="5" />
 
                     <!-- Priority Slider -->
                     <TextBlock Text="Priority:" Margin="5" FontFamily="{StaticResource BodyFont}" FontSize="14" />

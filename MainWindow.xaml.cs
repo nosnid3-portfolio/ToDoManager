@@ -75,18 +75,6 @@ namespace ToDoManager
         }
         //
 
-
-        // When a listboxitem is selected
-        public void MyListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // Check if an item is selected
-            if (Tasks != null && Tasks.SelectedItem != null)
-            {
-                // Do something with the selected item
-                Task selectedItem = (Task)Tasks.SelectedItem;
-            }
-        }
-
         // When the user presses the "Add A New Task" button -> show the popup menu
         private void OpenNewTaskPopupButton_Click(object sender, RoutedEventArgs e) { IsNewTaskPopupOpen = true; }
 
@@ -108,6 +96,10 @@ namespace ToDoManager
                         Difficulty = taskDifficulty,
                         Points = taskPriority * taskPriority + taskDifficulty * taskDifficulty
                     });
+
+            // Reset the popup
+            IsNewTaskPopupOpen = false;
+            TaskDescriptionTextBox.Text = string.Empty;
         }
 
         // 'X' button in the popup
